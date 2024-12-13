@@ -8,23 +8,96 @@ sources:
       - name: EMPLOYEES
         description: Main employee table
         columns:
-          - name: _LINE NUMBER
-            description: identify number of the row
-          - name: _FIVETRAN_SYNCED
-            description: Timestamp when the data was last synced by Fivetran
           - name: EMP_NO
             description: Unique identifier for each employee
+            tests:
+              - unique
+              - not_null
           - name: EMP_TITLE_ID
             description: Identifier for the employee's job title
+            tests:
+              - not_null
           - name: BIRTH_DATE
-            description: Birth date of the employee (stored as VARCHAR)
-          - name: FIRST_NAME
-            description: First name of the employee
-          - name: LAST_NAME
-            description: Last name of the employee
-          - name: SEX
-            description: Gender of the employee
+            description: Birth date of the employee
+            tests:
+              - not_null
           - name: HIRE_DATE
-            description: Hire date of the employee (stored as VARCHAR)
-          - name: primary key
-            description: Primary key constraint on the `_LINE` column
+            description: Hire date of the employee
+            tests:
+              - not_null
+
+      - name: DEPARTMENTS
+        description: Table containing department information
+        columns:
+          - name: DEPT_NO
+            description: Unique identifier for the department
+            tests:
+              - unique
+              - not_null
+          - name: DEPT_NAME
+            description: Name of the department
+            tests:
+              - not_null
+
+      - name: DEPARTURES
+        description: Table containing information on employee departures
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null
+          - name: EXIT_DATE
+            description: Date the employee left the company
+            tests:
+              - not_null
+
+      - name: DEPT_EMP
+        description: Table linking employees to departments
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null
+          - name: DEPT_NO
+            description: Unique identifier for the department the employee belongs to
+            tests:
+              - not_null
+
+      - name: DEPT_MANAGER
+        description: Table identifying department managers
+        columns:
+          - name: DEPT_NO
+            description: Unique identifier for the department
+            tests:
+              - not_null
+          - name: EMP_NO
+            description: Unique identifier for the manager of the department
+            tests:
+              - not_null
+              - relationships:
+                  to: ref('stg_fivetran_employees')
+                  field: EMP_NO
+
+      - name: SALARIES
+        description: Table containing salary history for employees
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null
+          - name: SALARY
+            description: Salary amount for the employee
+            tests:
+              - not_null
+
+      - name: TITLES
+        description: Table containing job titles for employees
+        columns:
+          - name: TITLE_ID
+            description: Identifier for the job title
+            tests:
+              - not_null
+          - name: TITLE
+            description: Name of the job title
+            tests:
+              - not_null

@@ -1,13 +1,9 @@
 with source as (
-
     select * from {{ source('fivetran', 'EMPLOYEES') }}
-
 ),
 
 renamed as (
-
     select
-
         _LINE as line_number,
         _FIVETRAN_SYNCED as fivetran_synced,
         EMP_NO as emp_no,
@@ -17,9 +13,8 @@ renamed as (
         LAST_NAME as last_name,
         SEX as sex,
         HIRE_DATE as hire_date
-
     from source
-
 )
 
 select * from renamed
+
