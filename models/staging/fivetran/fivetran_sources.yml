@@ -1,0 +1,30 @@
+version: 2
+sources:
+  - name: fivetran
+    description: Source Fivetran data
+    database: FIVETRAN_DATABASE
+    schema: ONEDRIVE
+    tables:
+      - name: EMPLOYEES
+        description: Main employee table
+        columns:
+          - name: _LINE NUMBER
+            description: identify number of the row
+          - name: _FIVETRAN_SYNCED
+            description: Timestamp when the data was last synced by Fivetran
+          - name: EMP_NO
+            description: Unique identifier for each employee
+          - name: EMP_TITLE_ID
+            description: Identifier for the employee's job title
+          - name: BIRTH_DATE
+            description: Birth date of the employee (stored as VARCHAR)
+          - name: FIRST_NAME
+            description: First name of the employee
+          - name: LAST_NAME
+            description: Last name of the employee
+          - name: SEX
+            description: Gender of the employee
+          - name: HIRE_DATE
+            description: Hire date of the employee (stored as VARCHAR)
+          - name: primary key
+            description: Primary key constraint on the `_LINE` column

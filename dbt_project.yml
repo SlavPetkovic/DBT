@@ -20,7 +20,7 @@ models:
   slav_demo:
     staging:
       materialized: view
-      snowflake_warehouse: FIVETRAN_DATABASE
+      snowflake_warehouse: FIVETRAN_WAREHOUSE
     marts:
       materialized: table
       snowflake_warehouse: FIVETRAN_WAREHOUSE
