@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: int_employees
+    description: |
+      Intermediate model for employees. Consolidates data about employees,
+      their tenure, employment status, and associated departments.
+    columns:
+      - name: emp_no
+        description: Unique identifier for each employee.
+        tests:
+          - unique
+          - not_null
+      - name: emp_title_id
+        description: Identifier for the employee's job title.
+        tests:
+          - not_null
+      - name: hire_date
+        description: Date the employee was hired.
+        tests:
+          - not_null
+      - name: tenure_days
+        description: Total number of days the employee has worked or was employed.
+      - name: tenure_years
+        description: Total number of years the employee has worked or was employed, rounded to two decimal places.
+      - name: employment_status
+        description: Employment status of the employee, either "Active" or "Departed".
+      - name: dept_name
+        description: Name of the department the employee belongs to.
+      - name: manager_emp_no
+        description: Unique identifier of the employee's manager.
+
+  - name: fct_employees
+    description: |
+      Fact table for employees. Includes enriched employee-level metrics, 
+      department-level aggregations, and time-based metrics for reporting purposes.
+    columns:
+      - name: emp_no
+        description: Unique identifier for each employee.
+        tests:
+          - unique
+          - not_null
+      - name: salary
+        description: Employee's salary.
+      - name: title
+        description: Job title of the employee.
+      - name: hire_year
+        description: Year the employee was hired.
+      - name: hire_month
+        description: Month the employee was hired.
+      - name: exit_year
+        description: Year the employee exited the company (if applicable).
+      - name: exit_month
+        description: Month the employee exited the company (if applicable).
+      - name: dept_name
+        description: Name of the department the employee belongs to.
+      - name: total_employees
+        description: Total number of employees in the department.
+      - name: active_employees
+        description: Total number of active employees in the department.
+      - name: departed_employees
+        description: Total number of employees who have left the department.
+      - name: avg_tenure_years
+        description: Average tenure of employees in the department, measured in years.
+      - name: avg_salary
+        description: Average salary of employees in the department.
+      - name: max_salary
+        description: Maximum salary of employees in the department.
+      - name: min_salary
+        description: Minimum salary of employees in the department.

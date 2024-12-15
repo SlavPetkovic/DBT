@@ -5,15 +5,13 @@ with employees_with_departures as (
         e.last_name,
         e.sex,
         e.birth_date,
-        cast(e.hire_date as date) as hire_date, -- Cast to DATE
-        cast(d.exit_date as date) as exit_date, -- Cast to DATE
-        e.emp_title_id, -- Include EMP_TITLE_ID
-        -- Calculate employment status
+        cast(e.hire_date as date) as hire_date,
+        cast(d.exit_date as date) as exit_date,
+        e.emp_title_id,
         case 
             when d.exit_date is null then 'Active'
             else 'Departed'
         end as employment_status,
-        -- Calculate tenure days and years
         datediff('day', cast(e.hire_date as date), 
             case 
                 when d.exit_date is null then current_date
@@ -26,27 +24,30 @@ with employees_with_departures as (
                 else cast(d.exit_date as date)
             end
         ) / 365.0, 2) as tenure_years,
-        -- Time-based columns
         year(cast(e.hire_date as date)) as hire_year,
         month(cast(e.hire_date as date)) as hire_month,
         year(cast(d.exit_date as date)) as exit_year,
-        month(cast(d.exit_date as date)) as exit_month
+        month(cast(d.exit_date as date)) as exit_month,
+        row_number() over (partition by e.emp_no order by e.hire_date desc) as row_number -- Deduplication logic
     from {{ ref('stg_fivetran_employees') }} e
     left join {{ ref('stg_fivetran_departures') }} d
     on e.emp_no = d.emp_no
+    where e.emp_no is not null
 ),
 
 departments_with_employees as (
-    select
+select
         de.emp_no,
         de.dept_no,
         d.dept_name,
-        dm.emp_no as manager_emp_no
+        row_number() over (
+            partition by de.emp_no 
+            order by d.dept_name -- Adjust the ordering logic as needed
+        ) as row_number
     from {{ ref('stg_fivetran_dept_emp') }} de
     join {{ ref('stg_fivetran_departments') }} d
     on de.dept_no = d.dept_no
-    left join {{ ref('stg_fivetran_dept_manager') }} dm
-    on de.dept_no = dm.dept_no
+    qualify row_number = 1 -- Keep only the first department for each employee
 ),
 
 final as (
@@ -64,12 +65,13 @@ final as (
         e.hire_month,
         e.exit_year,
         e.exit_month,
-        e.emp_title_id, -- Include EMP_TITLE_ID in the final output
-        d.dept_name,
-        d.manager_emp_no
+        e.emp_title_id,
+        d.dept_name
     from employees_with_departures e
     left join departments_with_employees d
     on e.emp_no = d.emp_no
+    where e.row_number = 1 -- Ensure only one row per emp_no
 )
 
-select * from final
+select * 
+from final

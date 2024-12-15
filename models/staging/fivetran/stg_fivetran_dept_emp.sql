@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('fivetran', 'DEPT_EMP') }}
+    {{ filter_fivetran_rows_with_keys('fivetran', 'DEPT_EMP', ['EMP_NO', 'DEPT_NO']) }}
 ),
 
 renamed as (
