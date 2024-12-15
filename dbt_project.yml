@@ -19,8 +19,9 @@ clean-targets:
 models:
   slav_demo:
     staging:
-      materialized: view
-      snowflake_warehouse: FIVETRAN_WAREHOUSE
+      +materialized: view
+      +snowflake_warehouse: FIVETRAN_WAREHOUSE
     marts:
-      materialized: table
-      snowflake_warehouse: FIVETRAN_WAREHOUSE
+      core:
+        +materialized: table
+        +snowflake_warehouse: FIVETRAN_WAREHOUSE
