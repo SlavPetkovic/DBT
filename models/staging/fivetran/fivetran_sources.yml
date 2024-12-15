@@ -1,0 +1,116 @@
+version: 2
+sources:
+  - name: fivetran
+    description: Source Fivetran data
+    database: FIVETRAN_DATABASE
+    schema: ONEDRIVE
+    tables:
+      - name: EMPLOYEES
+        description: Main employee table
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND FIRST_NAME IS NOT NULL"
+              - unique
+          - name: EMP_TITLE_ID
+            description: Identifier for the employee's job title
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+          - name: BIRTH_DATE
+            description: Birth date of the employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+          - name: HIRE_DATE
+            description: Hire date of the employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+
+      - name: DEPARTMENTS
+        description: Table containing department information
+        columns:
+          - name: DEPT_NO
+            description: Unique identifier for the department
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND DEPT_NAME IS NOT NULL"
+              - unique
+          - name: DEPT_NAME
+            description: Name of the department
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL"
+
+      - name: DEPARTURES
+        description: Table containing information on employee departures
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EXIT_DATE IS NOT NULL"
+          - name: EXIT_DATE
+            description: Date the employee left the company
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+
+      - name: DEPT_EMP
+        description: Table linking employees to departments
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND DEPT_NO IS NOT NULL"
+          - name: DEPT_NO
+            description: Unique identifier for the department the employee belongs to
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+
+      - name: DEPT_MANAGER
+        description: Table identifying department managers
+        columns:
+          - name: DEPT_NO
+            description: Unique identifier for the department
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+          - name: EMP_NO
+            description: Unique identifier for the manager of the department
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND DEPT_NO IS NOT NULL"
+
+      - name: SALARIES
+        description: Table containing salary history for employees
+        columns:
+          - name: EMP_NO
+            description: Unique identifier for each employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND SALARY IS NOT NULL"
+          - name: SALARY
+            description: Salary amount for the employee
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND EMP_NO IS NOT NULL"
+
+      - name: TITLES
+        description: Table containing job titles for employees
+        columns:
+          - name: TITLE_ID
+            description: Identifier for the job title
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND TITLE IS NOT NULL"
+          - name: TITLE
+            description: Name of the job title
+            tests:
+              - not_null:
+                  where: "_LINE IS NOT NULL AND _FIVETRAN_SYNCED IS NOT NULL AND TITLE_ID IS NOT NULL"
